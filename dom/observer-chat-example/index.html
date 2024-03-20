@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mini Chat</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/toastify-js"
+    ></script>
+    <style>
+      #chat {
+        width: 300px;
+        height: 200px;
+        overflow-y: scroll;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      #chat2 {
+        width: 300px;
+        height: 200px;
+        overflow-y: scroll;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+
+      .container {
+        display: flex;
+        padding: 10px;
+      }
+      .col {
+        padding-left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="col">
+        <p>Chat</p>
+        <div id="chat"></div>
+        <input
+          type="text"
+          id="messageInput"
+          placeholder="Type your message..."
+        />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+
+    <script src="./js/chatServer.js"></script>
+    <script src="./js/user.js"></script>
+    <script>
+      const chatRoom = new ChatRoom();
+      const user1 = new User("User");
+      const user2 = new User("Bot"); // Adicionamos um usuário 'Bot' para responder automaticamente
+      const user3 = new User("Bot 2");
+
+      chatRoom.addObserver(user1);
+
+      function sendMessage() {
+        const messageInput = document.getElementById("messageInput");
+        const message = messageInput.value;
+        if (message != "") {
+          chatRoom.sendMessage(message, "User");
+          messageInput.value = "";
+
+          // Resposta automática do Bot
+          setTimeout(() => {
+            chatRoom.sendMessage(message, "Bot");
+          }, 1000);
+
+          setTimeout(() => {
+            chatRoom.sendMessage(message, "Bot 2");
+          }, 2000);
+        }
+      }
+    </script>
+  </body>
+</html>
