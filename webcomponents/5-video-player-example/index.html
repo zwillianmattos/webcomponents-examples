@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custom Video Player</title>
+  </head>
+  <body>
+    <template id="custom-video-template">
+      <style>
+        /* Estilos do vídeo personalizado */
+        :host {
+          display: block;
+        }
+
+        /* Estilo para o componente de vídeo personalizado */
+        .custom-video {
+          width: 100%;
+        }
+
+        /* Estilo para a barra de progresso personalizada */
+        .custom-progress-bar {
+          position: relative;
+          height: 10px;
+          width: 100%;
+          background-color: #333;
+        }
+
+        /* Estilo para a barra de progresso vermelha */
+        .custom-progress-bar .progress {
+          position: absolute;
+          height: 100%;
+          background-color: red;
+        }
+        /* Estilo para os controles do vídeo personalizado */
+        .custom-video-controls {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background-color: rgba(0, 0, 0, 0.5);
+          padding: 10px;
+        }
+
+        /* Estilo para o botão play/pause */
+        .custom-video-controls button {
+          background-color: transparent;
+          color: #fff;
+          border: none;
+          padding: 5px 10px;
+          cursor: pointer;
+        }
+      </style>
+      <video class="custom-video">
+        <source src="" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <div class="custom-video-controls">
+        <button class="play-pause">Play</button>
+        <div class="custom-progress-bar">
+          <div class="progress"></div>
+        </div>
+      </div>
+    </template>
+
+    <script>
+      class CustomVideo extends HTMLElement {
+        constructor() {
+          super();
+          // Clone template content and attach shadow DOM
+          const template = document.getElementById("custom-video-template");
+          const content = template.content;
+          this.attachShadow({ mode: "open" }).appendChild(
+            content.cloneNode(true)
+          );
+
+          // Select video element and controls
+          this.video = this.shadowRoot.querySelector(".custom-video");
+          this.playPauseButton = this.shadowRoot.querySelector(".play-pause");
+          this.progressBar = this.shadowRoot.querySelector(".progress");
+          this.videoControls = this.shadowRoot.querySelector(
+            ".custom-video-controls"
+          );
+
+          // Play/Pause functionality
+          this.playPauseButton.addEventListener("click", () => {
+            if (this.video.paused) {
+              this.video.play();
+              this.playPauseButton.textContent = "Pause";
+            } else {
+              this.video.pause();
+              this.playPauseButton.textContent = "Play";
+            }
+          });
+
+          // Update progress bar
+          this.video.addEventListener("timeupdate", () => {
+            const percent =
+              (this.video.currentTime / this.video.duration) * 100;
+            this.progressBar.style.width = percent + "%";
+          });
+        }
+
+        static get observedAttributes() {
+          return ["src"];
+        }
+
+        attributeChangedCallback(name, oldValue, newValue) {
+          if (name === "src") {
+            this.video.src = newValue;
+          }
+        }
+      }
+
+      customElements.define("custom-video", CustomVideo);
+    </script>
+
+    <custom-video src="example.mp4" title=""></custom-video>
+    <custom-video src="example.mp4" title=""></custom-video>
+    <custom-video src="example.mp4" title=""></custom-video>
+  </body>
+</html>
